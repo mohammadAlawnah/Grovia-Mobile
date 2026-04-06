@@ -6,6 +6,7 @@ import Logo from "@/components/loginComponents/Logo";
 import Email from "@/components/loginComponents/Email";
 import Password from "@/components/loginComponents/Password";
 import Button from "@/components/loginComponents/Buttons";
+import {Link} from "expo-router";
 
 type FormData = {
     email: string;
@@ -37,7 +38,9 @@ export default function LoginScreen() {
             <Password control={control} errors={errors} name="password" placeholder="Password" />
 
             <View style={{ alignItems: "flex-end" }}>
-                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                <Link href={"/ForgotPasswordScreen"}>
+                    <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                </Link>
             </View>
             <Button title="Login" onPress={handleSubmit(onSubmit)} />
         </SafeAreaView>
