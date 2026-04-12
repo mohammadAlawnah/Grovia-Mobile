@@ -13,5 +13,5 @@ export const createUser = async (payload: any) => {
 };
 
 export const login = async (data: any) => {
-  return await ApiBase.post(`/v1/login`, data);
+  return await ApiBase.post("/users/auth/login", data);
 };

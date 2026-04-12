@@ -1,4 +1,13 @@
-import { StyleSheet, Text, View, KeyboardAvoidingView, ScrollView, Platform, useWindowDimensions } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    View,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    useWindowDimensions
+} from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
 import { login } from "@/api/UserService";
@@ -6,7 +15,9 @@ import Logo from "@/components/loginComponents/Logo";
 import Email from "@/components/loginComponents/Email";
 import Password from "@/components/loginComponents/Password";
 import Button from "@/components/loginComponents/Buttons";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useState } from "react";
+import * as SecureStore from "expo-secure-store";
 
 type FormData = {
     email: string;
@@ -15,9 +26,10 @@ type FormData = {
 
 export default function LoginScreen() {
     const { width, height } = useWindowDimensions();
+
     const normalize = (size: number) => {
-        return (size/375) * width;
-    }
+        return (size / 375) * width;
+    };
 
     const {
         control,
@@ -25,15 +37,33 @@ export default function LoginScreen() {
         formState: { errors },
     } = useForm<FormData>({ mode: "all" });
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
+
     const onSubmit = async (data: FormData) => {
         try {
-            console.log("login Data", data);
+            setIsLoading(true);
+            setError(null);
             const result = await login(data);
-            console.log(result);
-        } catch (error) {
-            console.log(error);
+            const token = result.data.accessToken;
+            await SecureStore.setItemAsync("token", token);
+            router.replace("/HomeScreen");
+        } catch (error: any) {
+            console.log("ERROR:", error?.response?.data);
+            setError("Invalid Email or password");
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    if (isLoading)
+        return (
+            <View style={{ marginTop: 20 }}>
+                <Text>Loading...</Text>
+            </View>
+        );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -45,18 +75,24 @@ export default function LoginScreen() {
                     contentContainerStyle={[
                         styles.scrollContainer,
                         {
-                            paddingHorizontal: width * 0.07,
+                            paddingHorizontal: width * 0.05,
                             minHeight: height,
-                        }
+                        },
                     ]}
                     keyboardShouldPersistTaps="handled"
                 >
                     <Logo />
 
-                    <Text style={[styles.title, {fontSize: normalize(20)}]}>Login page</Text>
+                    <Text style={[styles.title, { fontSize: normalize(20) }]}>
+                        Login page
+                    </Text>
 
-                    <View style={{ width: "100%" }}>
-                        <Email control={control} errors={errors} name="email" />
+                    <View style={{ width: width * 0.8 }}>
+                        <Email
+                            control={control}
+                            errors={errors}
+                            name="email"
+                        />
 
                         <Password
                             control={control}
@@ -64,18 +100,39 @@ export default function LoginScreen() {
                             name="password"
                             placeholder="Password"
                         />
+
+                        {error && (
+                            <Text style={styles.errorText}>
+                                {error}
+                            </Text>
+                        )}
                     </View>
 
                     <View style={styles.forgotContainer}>
                         <Link href={"/ForgotPasswordScreen"}>
-                            <Text style={{ fontSize: normalize(20) }}>
+                            <Text style={{ fontSize: normalize(16) }}>
                                 Forgot Password?
                             </Text>
                         </Link>
                     </View>
 
-                    <View style={{ width: "100%" }}>
-                        <Button title="Login" onPress={handleSubmit(onSubmit)} />
+                    <View style={styles.signupContainer}>
+                        <Text style={{ fontSize: normalize(14) }}>
+                            Don't have an account?
+                        </Text>
+
+                        <Link href={"/RegisterScreen"}>
+                            <Text style={[styles.signupText, { fontSize: normalize(14) }]}>
+                                Sign up
+                            </Text>
+                        </Link>
+                    </View>
+
+                    <View style={{ width: width * 0.8 }}>
+                        <Button
+                            title="Login"
+                            onPress={handleSubmit(onSubmit)}
+                        />
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -104,8 +161,27 @@ const styles = StyleSheet.create({
         alignSelf: "center",
     },
 
+    errorText: {
+        color: "red",
+        marginTop: 5,
+        marginBottom: 10,
+        alignSelf: "flex-start",
+    },
+
     forgotContainer: {
-        alignItems: "flex-end",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+
+    signupContainer: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: 5,
         marginBottom: 20,
+    },
+
+    signupText: {
+        color: "#53B175",
+        fontWeight: "600",
     },
 });
