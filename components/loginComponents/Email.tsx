@@ -1,16 +1,26 @@
-import { StyleSheet, View, Text, TextInput } from "react-native";
+import { StyleSheet, View, Text, TextInput, useWindowDimensions } from "react-native";
 import { Controller } from "react-hook-form";
 
 type Props = {
     control: any;
     errors: any;
-    name: string;
+    name: "email";
 };
 
 export default function Email({ control, errors, name }: Props) {
+
+    const { width } = useWindowDimensions();
+
+    const normalize = (size: number) => {
+        return (size / 375) * width;
+    };
+
     return (
-        <View>
-            <Text style={styles.textTitle}>{name}</Text>
+        <View style={{ width: width * 0.80 }}>
+            <Text style={[styles.textTitle, { fontSize: normalize(14) }]}>
+                {name}
+            </Text>
+
             <Controller
                 control={control}
                 name={name}
@@ -24,17 +34,23 @@ export default function Email({ control, errors, name }: Props) {
                 render={({ field }) => (
                     <View>
                         <TextInput
-                            style={styles.inputStyle}
+                            style={[
+                                styles.inputStyle,
+                                { fontSize: normalize(14) }
+                            ]}
                             onBlur={field.onBlur}
                             onChangeText={field.onChange}
-                            value={field.value}
+                            value={field.value || ""}
                             placeholder="Email"
                             placeholderTextColor="gray"
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />
-                        {errors.email && (
-                            <Text style={styles.errorText}>{errors.email.message}</Text>
+
+                        {errors?.email?.message && (
+                            <Text style={[styles.errorText, { fontSize: normalize(14) }]}>
+                                {errors.email.message}
+                            </Text>
                         )}
                     </View>
                 )}
@@ -51,14 +67,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 8,
         marginBottom: 5,
-        outlineStyle: "none",
     },
+
     errorText: {
         color: "red",
         marginBottom: 15,
     },
+
     textTitle: {
         paddingVertical: 8,
         fontSize: 15,
-    }
+        fontWeight: "500",
+    },
 });

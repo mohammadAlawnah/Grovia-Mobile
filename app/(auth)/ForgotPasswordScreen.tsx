@@ -1,8 +1,14 @@
 import React from "react";
-import { View,Text,StyleSheet } from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    KeyboardAvoidingView,
+    useWindowDimensions
+} from "react-native";
 import Logo from "@/components/loginComponents/Logo";
 import Email from "@/components/loginComponents/Email";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Buttons from "@/components/loginComponents/Buttons";
 
 type FormData = {
@@ -11,32 +17,73 @@ type FormData = {
 
 export default function ResetPasswordScreen() {
 
+    const { width } = useWindowDimensions();
+
+    const normalize = (size: number) => {
+        return (size / 375) * width;
+    };
+
     const {
         control,
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>({ mode: "all" });
 
-    return (
-        <View >
-            <Logo/>
-            <Text style={styles.titlePage}>Reset your password</Text>
-            <Email control={control} errors={errors} name="Email" />
-            <Buttons title="send code" onPress={handleSubmit}/>
+    const onSubmit = (data: FormData) => {
+        console.log(data.email);
+    };
 
-        </View>
-    )
+    return (
+        <KeyboardAvoidingView
+            style={styles.keyboardView}
+            behavior="padding"
+        >
+            <View style={[styles.container, { paddingHorizontal: width * 0.05 }]}>
+
+                <Logo />
+
+                <Text style={[styles.titlePage, { fontSize: normalize(20) }]}>
+                    Reset your password
+                </Text>
+
+                <View style={styles.formContainer}>
+
+                    <Email
+                        control={control}
+                        errors={errors}
+                        name="Email"
+                    />
+
+                    <Buttons
+                        title="send code"
+                        onPress={handleSubmit(onSubmit)}
+                    />
+
+                </View>
+
+            </View>
+        </KeyboardAvoidingView>
+    );
 }
+
 const styles = StyleSheet.create({
+    keyboardView: {
+        flex: 1,
+    },
+
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: "white",
+        justifyContent: "center",
+    },
+
+    formContainer: {
+        width: "100%",
     },
 
     titlePage: {
-        fontSize: 20,
         marginBottom: 20,
         alignSelf: "center",
+        fontWeight: "600",
     },
 });

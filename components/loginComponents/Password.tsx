@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TextInput } from "react-native";
+import { StyleSheet, View, Text, TextInput, useWindowDimensions, TouchableOpacity } from "react-native";
 import { Controller } from "react-hook-form";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -11,36 +11,63 @@ type Props = {
 };
 
 export default function Password({ control, errors, name, placeholder }: Props) {
+
     const [showPassword, setShowPassword] = useState(false);
+    const { width } = useWindowDimensions();
+
+    const normalize = (size: number) => {
+        return (size / 375) * width;
+    };
 
     return (
-        <View>
-            <Text style={styles.textTitle}>{name}</Text>
+        <View style={{ width: width * 0.80}}>
+            <Text style={[styles.textTitle, { fontSize: normalize(14) }]}>
+                {name}
+            </Text>
+
             <Controller
                 control={control}
                 name={name}
                 rules={{ required: "Password is required" }}
                 render={({ field }) => (
                     <View>
-                        <View style={styles.passwordContainer}>
+                        <View
+                            style={[
+                                styles.passwordContainer,
+                                {
+                                    height: normalize(48),
+                                    borderRadius: normalize(10),
+                                }
+                            ]}
+                        >
                             <TextInput
-                                style={styles.passwordInput}
+                                style={[
+                                    styles.passwordInput,
+                                    { fontSize: normalize(14) }
+                                ]}
                                 onBlur={field.onBlur}
                                 onChangeText={field.onChange}
-                                value={field.value}
+                                value={field.value || ""}
                                 placeholder={placeholder || "Password"}
                                 placeholderTextColor="gray"
                                 secureTextEntry={!showPassword}
                             />
-                            <Ionicons
-                                name={showPassword ? "eye-off" : "eye"}
-                                size={22}
-                                color="gray"
+
+                            <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
-                            />
+                            >
+                                <Ionicons
+                                    name={showPassword ? "eye-off" : "eye"}
+                                    size={normalize(18)}
+                                    color="gray"
+                                />
+                            </TouchableOpacity>
                         </View>
-                        {errors[name] && (
-                            <Text style={styles.errorText}>{errors[name].message}</Text>
+
+                        {errors?.[name]?.message && (
+                            <Text style={[styles.errorText, { fontSize: normalize(14) }]}>
+                                {errors[name]?.message}
+                            </Text>
                         )}
                     </View>
                 )}
@@ -55,21 +82,22 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderWidth: 1,
         borderColor: "#ccc",
-        borderRadius: 8,
-        height: 45,
         paddingHorizontal: 10,
         marginBottom: 5,
     },
+
     passwordInput: {
         flex: 1,
-        outlineStyle: "none",
     },
+
     errorText: {
         color: "red",
         marginBottom: 15,
     },
+
     textTitle: {
         paddingVertical: 8,
         fontSize: 15,
-    }
+        fontWeight: "500",
+    },
 });

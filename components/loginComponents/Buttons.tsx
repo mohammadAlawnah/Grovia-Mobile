@@ -1,17 +1,28 @@
-import { StyleSheet, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, TouchableOpacity, Text, useWindowDimensions } from "react-native";
 
 type Props = {
     title: string;
     onPress: () => void;
 };
 
-export default function Buttons({title, onPress,}: Props) {
+export default function Buttons({ title, onPress }: Props) {
+
+    const { width } = useWindowDimensions();
+
     return (
         <TouchableOpacity
-            style={styles.buttonStyle}
+            style={[
+                styles.buttonStyle,
+                {
+                    paddingVertical: width * 0.04,
+                    borderRadius: width * 0.03,
+                }
+            ]}
             onPress={onPress}
         >
-            <Text style={styles.buttonText}>{title}</Text>
+            <Text style={[styles.buttonText, { fontSize: width * 0.04 }]}>
+                {title}
+            </Text>
         </TouchableOpacity>
     );
 }
@@ -19,15 +30,13 @@ export default function Buttons({title, onPress,}: Props) {
 const styles = StyleSheet.create({
     buttonStyle: {
         backgroundColor: "#53B175",
-        paddingVertical: 15,
-        borderRadius: 12,
         alignItems: "center",
         marginTop: 20,
+        width: "100%",
     },
 
     buttonText: {
         color: "white",
-        fontSize: 16,
         fontWeight: "600",
     },
 });

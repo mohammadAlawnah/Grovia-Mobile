@@ -1,14 +1,27 @@
 import { useRef, useState } from "react";
-import { View, Text, TextInput, StyleSheet, Alert } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    useWindowDimensions
+} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import Logo from "@/components/loginComponents/Logo";
 import Buttons from "@/components/loginComponents/Buttons";
-
 
 export default function EnterCodeScreen() {
 
     const { email } = useLocalSearchParams();
     const router = useRouter();
+    const { width } = useWindowDimensions();
+
+    const normalize = (size: number) => {
+        return (size / 375) * width;
+    };
 
     const [digits, setDigits] = useState(["", "", "", ""]);
     const inputsRef = useRef<TextInput[]>([]);
@@ -20,10 +33,10 @@ export default function EnterCodeScreen() {
             setDigits(newDigits);
 
             if (text && index < 3) {
-                inputsRef.current[index + 1].focus();
+                inputsRef.current[index + 1]?.focus();
             }
             if (!text && index > 0) {
-                inputsRef.current[index - 1].focus();
+                inputsRef.current[index - 1]?.focus();
             }
         }
     };
@@ -55,45 +68,66 @@ export default function EnterCodeScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            <Logo/>
-            <Text style={styles.title}>
-                Enter the 4-digit code sent to your email
-            </Text>
+        <KeyboardAvoidingView
+            style={styles.keyboardView}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <View style={[styles.container, { paddingHorizontal: width * 0.05 }]}>
 
-            <View style={styles.inputContainer}>
-                {digits.map((digit, index) => (
-                    <TextInput
-                        key={index}
-                        style={styles.inputBox}
-                        value={digit}
-                        keyboardType="numeric"
-                        maxLength={1}
-                        onChangeText={(text) => handleChange(text, index)}
-                        ref={(ref) => {
-                            inputsRef.current[index] = ref!;
-                        }}
-                    />
-                ))}
+                <Logo />
+
+                <Text style={[styles.title, { fontSize: normalize(18) }]}>
+                    Enter the 4-digit code sent to your email
+                </Text>
+
+                <View style={styles.inputContainer}>
+                    {digits.map((digit, index) => (
+                        <TextInput
+                            key={index}
+                            style={[
+                                styles.inputBox,
+                                {
+                                    width: width * 0.14,
+                                    height: width * 0.14,
+                                    fontSize: normalize(18),
+                                    borderRadius: width * 0.02,
+                                }
+                            ]}
+                            value={digit}
+                            keyboardType="numeric"
+                            maxLength={1}
+                            onChangeText={(text) => handleChange(text, index)}
+                            ref={(ref) => {
+                                if (ref) inputsRef.current[index] = ref;
+                            }}
+                        />
+                    ))}
+                </View>
+
+                <View style={{ width: "100%" }}>
+                    <Buttons title="Verify" onPress={handleVerify} />
+                </View>
+
             </View>
-            <Buttons title="Verify" onPress={handleVerify} />
-
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    keyboardView: {
+        flex: 1,
+    },
+
     container: {
         flex: 1,
-        padding: 20,
         justifyContent: "center",
         backgroundColor: "white",
     },
 
     title: {
-        fontSize: 18,
         textAlign: "center",
         marginBottom: 40,
+        fontWeight: "500",
     },
 
     inputContainer: {
@@ -103,13 +137,8 @@ const styles = StyleSheet.create({
     },
 
     inputBox: {
-        width: 60,
-        height: 60,
-        borderWidth: 2.5,
+        borderWidth: 2,
         borderColor: "black",
-        // color: "white",
-        fontSize: 24,
         textAlign: "center",
-        borderRadius: 8,
     },
 });

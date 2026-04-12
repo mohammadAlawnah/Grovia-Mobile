@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = "https://jsonplaceholder.typicode.com";
+export const API_URL = "https://grovia-api.vercel.app/api";
 
 const handelErrors = async (err) => {
   if (err?.response?.status === 401) {

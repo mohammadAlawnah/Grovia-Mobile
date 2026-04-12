@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, KeyboardAvoidingView, ScrollView, Platform, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { login } from "@/api/UserService";
 import Logo from "@/components/loginComponents/Logo";
 import Email from "@/components/loginComponents/Email";
 import Password from "@/components/loginComponents/Password";
 import Button from "@/components/loginComponents/Buttons";
-import {Link} from "expo-router";
+import { Link } from "expo-router";
 
 type FormData = {
     email: string;
@@ -14,6 +14,11 @@ type FormData = {
 };
 
 export default function LoginScreen() {
+    const { width, height } = useWindowDimensions();
+    const normalize = (size: number) => {
+        return (size/375) * width;
+    }
+
     const {
         control,
         handleSubmit,
@@ -22,6 +27,7 @@ export default function LoginScreen() {
 
     const onSubmit = async (data: FormData) => {
         try {
+            console.log("login Data", data);
             const result = await login(data);
             console.log(result);
         } catch (error) {
@@ -31,18 +37,48 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Logo />
-            <Text style={styles.titlePage}>Login page</Text>
+            <KeyboardAvoidingView
+                style={styles.keyboard}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.scrollContainer,
+                        {
+                            paddingHorizontal: width * 0.07,
+                            minHeight: height,
+                        }
+                    ]}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Logo />
 
-            <Email control={control} errors={errors} name="email" />
-            <Password control={control} errors={errors} name="password" placeholder="Password" />
+                    <Text style={[styles.title, {fontSize: normalize(20)}]}>Login page</Text>
 
-            <View style={{ alignItems: "flex-end" }}>
-                <Link href={"/ForgotPasswordScreen"}>
-                    <Text style={styles.forgotPassword}>Forgot Password?</Text>
-                </Link>
-            </View>
-            <Button title="Login" onPress={handleSubmit(onSubmit)} />
+                    <View style={{ width: "100%" }}>
+                        <Email control={control} errors={errors} name="email" />
+
+                        <Password
+                            control={control}
+                            errors={errors}
+                            name="password"
+                            placeholder="Password"
+                        />
+                    </View>
+
+                    <View style={styles.forgotContainer}>
+                        <Link href={"/ForgotPasswordScreen"}>
+                            <Text style={{ fontSize: normalize(20) }}>
+                                Forgot Password?
+                            </Text>
+                        </Link>
+                    </View>
+
+                    <View style={{ width: "100%" }}>
+                        <Button title="Login" onPress={handleSubmit(onSubmit)} />
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
@@ -50,19 +86,26 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
         backgroundColor: "white",
     },
 
-    titlePage: {
-        fontSize: 20,
+    keyboard: {
+        flex: 1,
+    },
+
+    scrollContainer: {
+        flexGrow: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    title: {
         marginBottom: 20,
         alignSelf: "center",
     },
 
-    forgotPassword: {
-        alignSelf: "flex-end",
-        fontSize: 15,
+    forgotContainer: {
+        alignItems: "flex-end",
         marginBottom: 20,
     },
 });
