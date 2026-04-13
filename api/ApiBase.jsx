@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = "https://jsonplaceholder.typicode.com";
+export const API_URL = "https://grovia-api.vercel.app/api";
 
 const handelErrors = async (err) => {
   if (err?.response?.status === 401) {
@@ -41,3 +41,42 @@ axiosInstance.interceptors.response.use((response) => {
 }, handelErrors);
 
 export default axiosInstance;
+// import axios from "axios";
+
+// export const API_URL = "http://localhost:3000/api";
+
+// const handleErrors = async (err) => {
+//   if (err?.response?.status === 401) {
+//     console.log("Unauthorized");
+//   }
+
+//   if (err?.response?.status === 403) {
+//     console.log("You don't have permission to access this resource");
+//   }
+
+//   return Promise.reject(err);
+// };
+
+// const axiosInstance = axios.create({
+//   baseURL: API_URL,
+//   timeout: 60000,
+// });
+
+// axiosInstance.interceptors.request.use(
+//   (config) => {
+//     const token = "token";
+//     const tokenType = "Bearer";
+
+//     if (token) {
+//       config.headers.Authorization = `${tokenType} ${token}`;
+//     }
+
+//     config.headers["Content-Type"] = "application/json";
+//     return config;
+//   },
+//   (err) => Promise.reject(err),
+// );
+
+// axiosInstance.interceptors.response.use((response) => response, handleErrors);
+
+// export default axiosInstance;

@@ -72,7 +72,7 @@ export default function WelcomeScreen() {
 
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => router.push("/(main)/(tabs)/CategoryScreen")}
+              onPress={() => router.push("/(auth)/LoginScreen")}
               style={[
                 styles.button,
                 {
