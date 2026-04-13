@@ -1,11 +1,22 @@
-import { StyleSheet, Text, View, Alert, KeyboardAvoidingView, Platform, useWindowDimensions } from "react-native";
+import {
+    StyleSheet,
+    Text,
+    View,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    useWindowDimensions
+} from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useForm } from "react-hook-form";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
+
 import Logo from "@/components/loginComponents/Logo";
 import Password from "@/components/loginComponents/Password";
 import Button from "@/components/loginComponents/Buttons";
-// import { resetPassword } from "@/api/UserService";
+import { resetPassword } from "@/api/ResetPassword";
 
 type FormData = {
     password: string;
@@ -14,97 +25,123 @@ type FormData = {
 
 export default function ResetPasswordScreen() {
 
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     const router = useRouter();
 
-    const normalize = (size: number) => {
-        return (size / 375) * width;
-    };
+    const { email } = useLocalSearchParams();
+    const userEmail = Array.isArray(email) ? email[0] : email;
 
-    const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
-        mode: "all",
-    });
+    const [serverError, setServerError] = useState<string | null>(null);
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormData>({ mode: "all" });
 
     const onSubmit = async (data: FormData) => {
+
+        setServerError(null);
+
         if (data.password !== data.confirmPassword) {
-            Alert.alert("Error", "Passwords do not match");
+            setServerError("Passwords do not match");
             return;
         }
 
         try {
-            const result = await resetPassword({ password: data.password });
+            const result = await resetPassword({
+                email: userEmail,
+                password: data.password,
+                verifyPassword: data.confirmPassword
+            });
 
-            if (result.status === 200) {
-                Alert.alert(
-                    "Success",
-                    "Password has been reset successfully",
-                    [{ text: "OK", onPress: () => router.push("/(tabs)/login") }]
-                );
-            } else {
-                Alert.alert("Error", "Failed to reset password");
+            if (result.status === 201) {
+                router.replace("/LoginScreen");
             }
-        } catch (error) {
-            console.log(error);
-            Alert.alert("Error", "Something went wrong. Try again later.");
+
+        } catch (error: any) {
+            console.log(error?.response?.data);
+            setServerError(error?.response?.data?.message || "Error");
         }
     };
 
     return (
-        <KeyboardAvoidingView
-            style={styles.keyboardView}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-            <SafeAreaView style={[styles.container, { paddingHorizontal: width * 0.05 }]}>
-
-                <Logo />
-
-                <Text style={[styles.titlePage, { fontSize: normalize(18) }]}>
-                    Reset Password
-                </Text>
-
-                <View style={{ width: "100%" }}>
-
-                    <Password
-                        control={control}
-                        errors={errors}
-                        name="password"
-                        placeholder="new password"
-                    />
-
-                    <Password
-                        control={control}
-                        errors={errors}
-                        name="confirmPassword"
-                        placeholder="confirm password"
-                    />
-
-                </View>
-
-                <View style={{ width: "100%" }}>
-                    <Button
-                        title="Reset Password"
-                        onPress={handleSubmit(onSubmit)}
-                    />
-                </View>
-
-            </SafeAreaView>
-        </KeyboardAvoidingView>
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView
+                style={styles.keyboard}
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+            >
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.scrollContainer,
+                        {
+                            paddingHorizontal: width * 0.05,
+                            minHeight: height,
+                        },
+                    ]}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <Logo />
+                    <Text style={styles.title}>
+                        Reset Password
+                    </Text>
+                    <View style={{ width: width * 0.8 }}>
+                        <Password
+                            control={control}
+                            errors={errors}
+                            name="password"
+                            placeholder="Password"
+                        />
+                        <Password
+                            control={control}
+                            errors={errors}
+                            name="confirmPassword"
+                            placeholder="Confirm Password"
+                        />
+                        {serverError && (
+                            <Text style={styles.errorText}>
+                                {serverError}
+                            </Text>
+                        )}
+                    </View>
+                    <View style={{ width: width * 0.8 }}>
+                        <Button
+                            title="Reset Password"
+                            onPress={handleSubmit(onSubmit)}
+                        />
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    keyboardView: {
-        flex: 1,
-    },
-
     container: {
         flex: 1,
         backgroundColor: "white",
     },
 
-    titlePage: {
+    keyboard: {
+        flex: 1,
+    },
+
+    scrollContainer: {
+        flexGrow: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    title: {
         marginBottom: 20,
         alignSelf: "center",
-        fontWeight: "600",
+        fontSize: 20,
+    },
+
+    errorText: {
+        color: "red",
+        marginTop: 5,
+        marginBottom: 10,
+        alignSelf: "flex-start",
     },
 });

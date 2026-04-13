@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
     StyleSheet,
     KeyboardAvoidingView,
+    ScrollView,
+    Platform,
     useWindowDimensions
 } from "react-native";
+
+import { useRouter } from "expo-router";
 import Logo from "@/components/loginComponents/Logo";
 import Email from "@/components/loginComponents/Email";
 import { useForm } from "react-hook-form";
 import Buttons from "@/components/loginComponents/Buttons";
+import { sendResetCode } from "@/api/ResetPassword";
 
 type FormData = {
     email: string;
@@ -17,11 +22,13 @@ type FormData = {
 
 export default function ResetPasswordScreen() {
 
-    const { width } = useWindowDimensions();
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const normalize = (size: number) => {
-        return (size / 375) * width;
-    };
+    const { width, height } = useWindowDimensions();
+
+    const normalize = (size: number) => (size / 375) * width;
 
     const {
         control,
@@ -29,61 +36,94 @@ export default function ResetPasswordScreen() {
         formState: { errors },
     } = useForm<FormData>({ mode: "all" });
 
-    const onSubmit = (data: FormData) => {
-        console.log(data.email);
+    const onSubmit = async (data: FormData) => {
+
+        try {
+            setLoading(true);
+            setError(null);
+            await sendResetCode(data);
+            router.push({
+                pathname: "/EnterCodeScreen",
+                params: {
+                    email: data.email
+                }
+            });
+        } catch (error: any) {
+            setError("Email not found");
+        } finally {
+            setLoading(false);
+        }
     };
+    if (loading) {
+        return (
+            <View style={{ marginTop: 20 }}>
+                <Text>Loading...</Text>
+            </View>
+        );
+    }
 
     return (
         <KeyboardAvoidingView
-            style={styles.keyboardView}
-            behavior="padding"
+            style={styles.keyboard}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View style={[styles.container, { paddingHorizontal: width * 0.05 }]}>
-
+            <ScrollView
+                contentContainerStyle={[
+                    styles.scrollContainer,
+                    {
+                        paddingHorizontal: width * 0.05,
+                        minHeight: height,
+                    },
+                ]}
+                keyboardShouldPersistTaps="handled"
+            >
                 <Logo />
-
-                <Text style={[styles.titlePage, { fontSize: normalize(20) }]}>
+                <Text style={[styles.title, { fontSize: normalize(20) }]}>
                     Reset your password
                 </Text>
-
-                <View style={styles.formContainer}>
-
+                <View style={{ width: width * 0.8 }}>
                     <Email
                         control={control}
                         errors={errors}
-                        name="Email"
+                        name="email"
                     />
-
+                    {error && (
+                        <Text style={styles.errorText}>
+                            {error}
+                        </Text>
+                    )}
                     <Buttons
-                        title="send code"
+                        title="Send Code"
                         onPress={handleSubmit(onSubmit)}
                     />
-
                 </View>
 
-            </View>
+            </ScrollView>
         </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    keyboardView: {
-        flex: 1,
-    },
-
-    container: {
+    keyboard: {
         flex: 1,
         backgroundColor: "white",
+    },
+
+    scrollContainer: {
+        flexGrow: 1,
+        alignItems: "center",
         justifyContent: "center",
     },
 
-    formContainer: {
-        width: "100%",
-    },
-
-    titlePage: {
+    title: {
         marginBottom: 20,
         alignSelf: "center",
         fontWeight: "600",
+    },
+
+    errorText: {
+        color: "red",
+        marginBottom: 10,
+        alignSelf: "flex-start",
     },
 });

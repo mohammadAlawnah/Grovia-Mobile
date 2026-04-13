@@ -1,69 +1,56 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
     View,
     Text,
     TextInput,
     StyleSheet,
-    Alert,
     KeyboardAvoidingView,
     Platform,
     useWindowDimensions
 } from "react-native";
+
 import { useRouter, useLocalSearchParams } from "expo-router";
 import Logo from "@/components/loginComponents/Logo";
 import Buttons from "@/components/loginComponents/Buttons";
+import { verifyOtp } from "@/api/ResetPassword";
 
 export default function EnterCodeScreen() {
 
     const { email } = useLocalSearchParams();
+    const userEmail = Array.isArray(email) ? email[0] : email;
+
     const router = useRouter();
     const { width } = useWindowDimensions();
 
-    const normalize = (size: number) => {
-        return (size / 375) * width;
-    };
+    const normalize = (size: number) => (size / 375) * width;
 
-    const [digits, setDigits] = useState(["", "", "", ""]);
-    const inputsRef = useRef<TextInput[]>([]);
-
-    const handleChange = (text: string, index: number) => {
-        if (/^\d$/.test(text) || text === "") {
-            const newDigits = [...digits];
-            newDigits[index] = text;
-            setDigits(newDigits);
-
-            if (text && index < 3) {
-                inputsRef.current[index + 1]?.focus();
-            }
-            if (!text && index > 0) {
-                inputsRef.current[index - 1]?.focus();
-            }
-        }
-    };
+    const [code, setCode] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     const handleVerify = async () => {
-        const code = digits.join("");
-
-        if (code.length < 4) {
-            Alert.alert("Error", "Please enter all 4 digits");
+        setError(null);
+        if (!userEmail) {
+            setError("Email not found");
             return;
         }
-
+        if (code.trim().length !== 4) {
+            setError("Please enter 4-digit code");
+            return;
+        }
+        const data: FormData = {
+            email: userEmail,
+            code: code.trim()
+        };
         try {
-            const response = await verifyOtp({ email, code });
-
-            if (response.data.success) {
-                router.push({
-                    pathname: "/resetPassword",
-                    params: { email }
-                });
-            } else {
-                Alert.alert("Error", "Invalid code, try again");
-            }
-
-        } catch (err) {
-            console.log(err);
-            Alert.alert("Error", "Something went wrong");
+            console.log("VERIFY DATA:", data);
+            const response = await verifyOtp(data);
+            router.push({
+                pathname: "/ResetPasswordScreen",
+                params: { email: userEmail }
+            });
+        } catch (err: any) {
+            console.log("VERIFY ERROR:", err?.response?.data);
+            setError(err?.response?.data?.message || "Invalid code");
         }
     };
 
@@ -73,37 +60,28 @@ export default function EnterCodeScreen() {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View style={[styles.container, { paddingHorizontal: width * 0.05 }]}>
-
                 <Logo />
-
                 <Text style={[styles.title, { fontSize: normalize(18) }]}>
-                    Enter the 4-digit code sent to your email
+                    Enter verification code
                 </Text>
-
-                <View style={styles.inputContainer}>
-                    {digits.map((digit, index) => (
-                        <TextInput
-                            key={index}
-                            style={[
-                                styles.inputBox,
-                                {
-                                    width: width * 0.14,
-                                    height: width * 0.14,
-                                    fontSize: normalize(18),
-                                    borderRadius: width * 0.02,
-                                }
-                            ]}
-                            value={digit}
-                            keyboardType="numeric"
-                            maxLength={1}
-                            onChangeText={(text) => handleChange(text, index)}
-                            ref={(ref) => {
-                                if (ref) inputsRef.current[index] = ref;
-                            }}
-                        />
-                    ))}
-                </View>
-
+                {userEmail && (
+                    <Text style={styles.emailText}>
+                        Code sent to: {userEmail}
+                    </Text>
+                )}
+                <TextInput
+                    style={styles.input}
+                    value={code}
+                    onChangeText={setCode}
+                    keyboardType="numeric"
+                    maxLength={4}
+                    placeholder="Enter 4-digit code"
+                />
+                {error && (
+                    <Text style={styles.errorText}>
+                        {error}
+                    </Text>
+                )}
                 <View style={{ width: "100%" }}>
                     <Buttons title="Verify" onPress={handleVerify} />
                 </View>
@@ -117,28 +95,33 @@ const styles = StyleSheet.create({
     keyboardView: {
         flex: 1,
     },
-
     container: {
         flex: 1,
         justifyContent: "center",
         backgroundColor: "white",
     },
-
     title: {
         textAlign: "center",
-        marginBottom: 40,
+        marginBottom: 20,
         fontWeight: "500",
     },
-
-    inputContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 40,
-    },
-
-    inputBox: {
-        borderWidth: 2,
-        borderColor: "black",
+    emailText: {
         textAlign: "center",
+        marginBottom: 30,
+        color: "gray",
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "black",
+        padding: 15,
+        borderRadius: 10,
+        fontSize: 18,
+        marginBottom: 10,
+        textAlign: "center"
+    },
+    errorText: {
+        color: "red",
+        textAlign: "center",
+        marginBottom: 10,
     },
 });
