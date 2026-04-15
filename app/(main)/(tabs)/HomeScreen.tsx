@@ -3,11 +3,13 @@ import { FlatList, ScrollView, StatusBar, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { getProductsByCategory } from "@/api/Product.Servise";
-import Banner from "@/components/Banner";
-import HomeHeader from "@/components/HomeHeader";
-import ProductCard, { ProductItem } from "@/components/ProductCard";
-import SearchBar from "@/components/SearchBar";
-import SectionHeader from "@/components/SectionHeader";
+import Banner from "@/components/HomeComponents/Banner";
+import HomeHeader from "@/components/HomeComponents/HomeHeader";
+import ProductCard, {
+  ProductItem,
+} from "@/components/HomeComponents/ProductCard";
+import SearchBar from "@/components/HomeComponents/SearchBar";
+import SectionHeader from "@/components/HomeComponents/SectionHeader";
 
 export default function HomeScreen() {
   const [fruits, setFruits] = useState<ProductItem[]>([]);
