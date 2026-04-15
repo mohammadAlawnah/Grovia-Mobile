@@ -2,20 +2,19 @@ import { getProductById } from "@/api/Product.Servise";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import ProductImageCard from "@/components/ProductImageCard";
-import ProductHeader from "@/components/ProductHeader";
-import PriceSection from "@/components/PriceSection";
-import ProductDescription from "@/components/ProductDescription";
-import NutritionInfo from "@/components/NutritionInfo";
-import ReviewStars from "@/components/ReviewStars";
-import AddToCartButton from "@/components/AddToCartButton";
+import ProductImageCard from "@/components/productDetailsComp/ProductImageCard";
+import ProductHeader from "@/components/productDetailsComp/ProductHeader";
+import PriceSection from "@/components/productDetailsComp/PriceSection";
+import ProductDescription from "@/components/productDetailsComp/ProductDescription";
+import NutritionInfo from "@/components/productDetailsComp/NutritionInfo";
+import ReviewStars from "@/components/productDetailsComp/ReviewStars";
+import AddToCartButton from "@/components/productDetailsComp/AddToCartButton";
 import { Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
 const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState<any>({});
   const { id } = useLocalSearchParams();
   const [count, setCount] = useState(1);
-  const [rating, setRating] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const increseCount = () => {

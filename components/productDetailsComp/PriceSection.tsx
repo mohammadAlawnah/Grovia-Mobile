@@ -1,13 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Dimensions } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { IconButton } from "react-native-paper";
 const { width } = Dimensions.get("window");
 const PriceSection = ({ productDetails, count, increseCount, decreseCount }: any) => {
   return (
     <View style={styles.priceRow}>
       <View style={styles.counter}>
         <Pressable onPress={decreseCount} disabled={count == 1}>
-          <Ionicons name="remove" size={24} color={count == 1 ? "gray" : "red"} />
+          <IconButton icon="minus" size={24} iconColor={count == 1 ? "gray" : "red"} />
         </Pressable>
 
         <View style={styles.countBox}>
@@ -15,7 +15,7 @@ const PriceSection = ({ productDetails, count, increseCount, decreseCount }: any
         </View>
 
         <Pressable onPress={increseCount}>
-          <Ionicons name="add" size={24} color="green" />
+          <IconButton icon="plus" size={24} iconColor="green" />
         </Pressable>
       </View>
 
