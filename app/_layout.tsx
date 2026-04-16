@@ -13,6 +13,7 @@
 // }
 
 import { queryClient } from "@/lib/queryClient";
+import { CartProvider } from "@/context/CartContext";
 import { QueryClientProvider } from "@tanstack/react-query";
 import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from "expo-router";
@@ -25,12 +26,14 @@ export default function RootLayout() {
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="WelcomeScreen" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(main)" />
-      </Stack>
+      <CartProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="WelcomeScreen" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(main)" />
+        </Stack>
+      </CartProvider>
     </QueryClientProvider>
   );
 }

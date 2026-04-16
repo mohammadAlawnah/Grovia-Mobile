@@ -1,7 +1,15 @@
+import { useCart } from "@/context/CartContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  GestureResponderEvent,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export type ProductItem = {
   id: string;
@@ -17,9 +25,15 @@ type ProductCardProps = {
 
 export default function ProductCard({ item }: ProductCardProps) {
   const router = useRouter();
+  const { addToCart } = useCart();
 
   const handleGoToProduct = () => {
     router.push(`/product/${item.id}`);
+  };
+
+  const handleAddToCart = (event: GestureResponderEvent) => {
+    event.stopPropagation();
+    addToCart();
   };
 
   return (
@@ -43,7 +57,7 @@ export default function ProductCard({ item }: ProductCardProps) {
       <View style={styles.priceRow}>
         <Text style={styles.priceText}>{item.price} $</Text>
 
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
           <Ionicons name="add" size={20} color="#fff" />
         </TouchableOpacity>
       </View>

@@ -1,9 +1,14 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, Dimensions } from "react-native";
 const { width } = Dimensions.get("window");
-const AddToCartButton = () => {
+
+type AddToCartButtonProps = {
+  onPress: () => void;
+};
+
+const AddToCartButton = ({ onPress }: AddToCartButtonProps) => {
   return (
-    <TouchableOpacity style={styles.mainButton}>
+    <TouchableOpacity style={styles.mainButton} onPress={onPress}>
       <Text style={styles.buttonText}>Add To Basket</Text>
     </TouchableOpacity>
   );

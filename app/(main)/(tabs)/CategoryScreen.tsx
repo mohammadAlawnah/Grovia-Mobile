@@ -57,10 +57,10 @@ export default function CategoryScreen() {
   });
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />{" "}
-      <Text style={styles.headerTitle}>Find Products</Text>{" "}
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <Text style={styles.headerTitle}>Find Products</Text>
       <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#7C7C7C" />{" "}
+        <Ionicons name="search-outline" size={20} color="#7C7C7C" />
         <TextInput
           style={styles.searchInput}
           placeholder="Search Store"

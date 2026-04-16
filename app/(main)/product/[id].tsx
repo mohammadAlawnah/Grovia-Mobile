@@ -10,12 +10,14 @@ import NutritionInfo from "@/components/productDetailsComp/NutritionInfo";
 import ReviewStars from "@/components/productDetailsComp/ReviewStars";
 import AddToCartButton from "@/components/productDetailsComp/AddToCartButton";
 import { Dimensions } from "react-native";
+import { useCart } from "@/context/CartContext";
 const { width } = Dimensions.get("window");
 const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState<any>({});
   const { id } = useLocalSearchParams();
   const [count, setCount] = useState(1);
   const [isFavorite, setIsFavorite] = useState(false);
+  const { addToCart } = useCart();
 
   const increseCount = () => {
     setCount(count + 1);
@@ -79,7 +81,7 @@ const ProductDetails = () => {
         </View>
 
         
-        <AddToCartButton />
+        <AddToCartButton onPress={() => addToCart(count)} />
       </View>
     </View>
   );
