@@ -46,10 +46,9 @@ export default function LoginScreen() {
   const onSubmit = async (data: FormData) => {
     try {
       setError(null);
-
+      setIsLoading(true);
       const result = await login(data);
 
-      setIsLoading(true);
 
       const token = result.data.accessToken;
       await SecureStore.setItemAsync("token", token);
