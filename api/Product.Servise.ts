@@ -1,7 +1,7 @@
 import ApiBase from "@/api/ApiBase";
 
 export const getProducts = async () => {
-  return await ApiBase.get("/posts");
+  return await ApiBase.get("/products");
 };
 
 export const getProductById = async (id: any) => {
