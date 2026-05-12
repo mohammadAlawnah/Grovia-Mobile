@@ -17,7 +17,7 @@ export default function FavouriteScreen() {
     const { width, height } = useWindowDimensions();
     const router = useRouter();
     const { favorites, clearFavorites } = useFavorites();
-    const addSingleProduct = (id: number) => {
+    const goToProductDetails = (id: number) => {
         router.push(`/product/${id}`);
     };
 
@@ -42,7 +42,7 @@ export default function FavouriteScreen() {
                                     image={{ uri: img }}
                                     title={title}
                                     price={price}
-                                    onPress={() => addSingleProduct(id)}
+                                    onPress={() => goToProductDetails(id)}
                                 />
                             </View>
                         ))
