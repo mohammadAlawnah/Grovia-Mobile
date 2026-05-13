@@ -90,8 +90,7 @@ const ProductDetails = () => {
           <Text style={styles.rowTitle}>Review</Text>
           <ReviewStars productDetails={productDetails} />
         </View>
-
-
+        
         <AddToCartButton onPress={() => addToCart(count)} />
       </View>
     </View>
