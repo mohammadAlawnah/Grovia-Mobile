@@ -46,14 +46,9 @@ export default function LoginScreen() {
       setError(null);
       setIsLoading(true);
       const result = await login(data);
-      console.log(result.data);
-
-
       const token = result.data.accessToken;
       await SecureStore.setItemAsync("token", token);
-
       router.replace("/HomeScreen");
-
     } catch (error: any) {
       setError("Invalid Email or password");
     } finally {

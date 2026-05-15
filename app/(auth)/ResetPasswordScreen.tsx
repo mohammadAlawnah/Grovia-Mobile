@@ -1,6 +1,4 @@
 import {
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -64,10 +62,6 @@ export default function ResetPasswordScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.keyboard}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
         <ScrollView
           contentContainerStyle={[
             styles.scrollContainer,
@@ -99,7 +93,6 @@ export default function ResetPasswordScreen() {
             <Button title="Reset Password" onPress={handleSubmit(onSubmit)} />
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

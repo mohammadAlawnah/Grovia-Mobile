@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -39,12 +37,8 @@ export default function ResetPasswordScreen() {
   const onSubmit = async (data: FormData) => {
     try {
       setError(null);
-
       await sendResetCode(data);
-
-      // اذا نجح
       setLoading(true);
-
       router.push({
         pathname: "/EnterCodeScreen",
         params: {
@@ -58,7 +52,6 @@ export default function ResetPasswordScreen() {
     }
   };
 
-  // Loading Screen
   if (loading) {
     return (
         <View style={styles.loadingContainer}>
@@ -69,17 +62,13 @@ export default function ResetPasswordScreen() {
   }
 
   return (
-      <KeyboardAvoidingView
-          style={styles.keyboard}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
         <ScrollView
             contentContainerStyle={[
               styles.scrollContainer,
               {
                 paddingHorizontal: width * 0.05,
                 minHeight: height,
-                paddingTop: height * 0.08, // نزّل الصفحة شوي
+                paddingTop: height * 0.08,
               },
             ]}
             keyboardShouldPersistTaps="handled"
@@ -98,7 +87,6 @@ export default function ResetPasswordScreen() {
             <Buttons title="Send Code" onPress={handleSubmit(onSubmit)} />
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
   );
 }
 
