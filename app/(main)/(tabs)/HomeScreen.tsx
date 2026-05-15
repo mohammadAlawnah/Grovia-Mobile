@@ -80,8 +80,6 @@ export default function HomeScreen() {
           contentContainerStyle={[styles.horizontalList, { paddingBottom: 30 }]}
           renderItem={({ item }) => <ProductCard item={item} />}
         />
-
-        <LogoutButton/>
       </ScrollView>
     </SafeAreaView>
   );

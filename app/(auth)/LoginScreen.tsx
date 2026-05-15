@@ -46,6 +46,7 @@ export default function LoginScreen() {
       setError(null);
       setIsLoading(true);
       const result = await login(data);
+      console.log(result.data);
 
 
       const token = result.data.accessToken;
