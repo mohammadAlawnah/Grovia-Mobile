@@ -12,6 +12,7 @@ import SearchBar from "@/components/HomeComponents/SearchBar";
 import SectionHeader from "@/components/HomeComponents/SectionHeader";
 import * as SecureStore from "expo-secure-store";
 import {router} from "expo-router";
+import LogoutButton from "@/components/Logout/Logout";
 
 export default function HomeScreen() {
   const [fruits, setFruits] = useState<ProductItem[]>([]);
@@ -32,10 +33,6 @@ export default function HomeScreen() {
     } catch (error) {
       console.log(error);
     }
-  };
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync("token");
-    router.replace("/LoginScreen");
   };
 
   useEffect(() => {
@@ -83,8 +80,6 @@ export default function HomeScreen() {
           contentContainerStyle={[styles.horizontalList, { paddingBottom: 30 }]}
           renderItem={({ item }) => <ProductCard item={item} />}
         />
-
-        <Button title="Logout" onPress={() => handleLogout()} />
       </ScrollView>
     </SafeAreaView>
   );
