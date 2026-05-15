@@ -67,7 +67,6 @@ export default function EnterCodeScreen() {
     }
   };
 
-  // Loading Screen
   if (loading) {
     return (
         <View style={styles.loadingContainer}>
