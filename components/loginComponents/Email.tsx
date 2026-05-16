@@ -38,22 +38,23 @@ export default function Email({ control, errors, name }: Props) {
         }}
         render={({ field }) => (
           <View>
-            <TextInput
-              style={[styles.inputStyle, { fontSize: normalize(14) }]}
-              onBlur={field.onBlur}
-              onChangeText={field.onChange}
-              value={field.value || ""}
-              placeholder="Email"
-              placeholderTextColor="gray"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+              <TextInput
+                  testID="email-input"
+                  style={[styles.inputStyle, { fontSize: normalize(14) }]}
+                  onBlur={field.onBlur}
+                  onChangeText={field.onChange}
+                  value={field.value || ""}
+                  placeholder="Email"
+                  placeholderTextColor="gray"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+              />
 
-            {errors?.email?.message && (
-              <Text style={[styles.errorText, { fontSize: normalize(14) }]}>
-                {errors.email.message}
-              </Text>
-            )}
+              {errors?.email?.message && (
+                  <Text style={[styles.errorText, { fontSize: normalize(14) }]}>
+                      {errors.email.message}
+                  </Text>
+              )}
           </View>
         )}
       />
