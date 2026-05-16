@@ -1,3 +1,4 @@
+import { addItemToCart } from "@/api/Cart.Servise";
 import { useCart } from "@/context/CartContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -33,6 +34,7 @@ export default function ProductCard({ item }: ProductCardProps) {
 
   const handleAddToCart = (event: GestureResponderEvent) => {
     event.stopPropagation();
+    addItemToCart(item.id);
     addToCart();
   };
 

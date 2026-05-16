@@ -11,13 +11,16 @@ import ReviewStars from "@/components/productDetailsComp/ReviewStars";
 import AddToCartButton from "@/components/productDetailsComp/AddToCartButton";
 import { Dimensions } from "react-native";
 import { useCart } from "@/context/CartContext";
+import { useFavorites } from "@/context/FavoritesContext";
+
 const { width } = Dimensions.get("window");
 const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState<any>({});
   const { id } = useLocalSearchParams();
   const [count, setCount] = useState(1);
-  const [isFavorite, setIsFavorite] = useState(false);
   const { addToCart } = useCart();
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
+  const favorite = isFavorite(productDetails?.id);
 
   const increseCount = () => {
     setCount(count + 1);
@@ -32,29 +35,37 @@ const ProductDetails = () => {
     setProductDetails(response.data);
   };
 
+  const toggleFavorite = () => {
+    if (favorite) {
+      removeFromFavorites(productDetails.id);
+    } else {
+      addToFavorites(productDetails);
+    }
+  };
+
   useEffect(() => {
     fetechData();
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      
+    <View style={styles.container}>
+
       <ProductImageCard productDetails={productDetails} />
 
       <View style={styles.content}>
-        
+
         <ProductHeader
           productDetails={productDetails}
-          isFavorite={isFavorite}
-          setIsFavorite={setIsFavorite}
+          isFavorite={favorite}
+          setIsFavorite={toggleFavorite}
         />
 
-        
+
         <Text style={styles.weight}>
           {`${productDetails.quantity},${productDetails.unit}`}
         </Text>
 
-        
+
         <PriceSection
           productDetails={productDetails}
           count={count}
@@ -64,22 +75,21 @@ const ProductDetails = () => {
 
         <View style={styles.divider} />
 
-        
+
         <ProductDescription productDetails={productDetails} />
 
         <View style={styles.divider} />
 
-        
+
         <NutritionInfo productDetails={productDetails} />
 
         <View style={styles.divider} />
 
-        
+
         <View style={styles.listRow}>
           <Text style={styles.rowTitle}>Review</Text>
           <ReviewStars productDetails={productDetails} />
         </View>
-
         
         <AddToCartButton onPress={() => addToCart(count)} />
       </View>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, ScrollView, StatusBar, StyleSheet } from "react-native";
+import {Button, FlatList, ScrollView, StatusBar, StyleSheet} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { getProductsByCategory } from "@/api/Product.Servise";
@@ -10,6 +10,9 @@ import ProductCard, {
 } from "@/components/HomeComponents/ProductCard";
 import SearchBar from "@/components/HomeComponents/SearchBar";
 import SectionHeader from "@/components/HomeComponents/SectionHeader";
+import * as SecureStore from "expo-secure-store";
+import {router} from "expo-router";
+import LogoutButton from "@/components/Logout/Logout";
 
 export default function HomeScreen() {
   const [fruits, setFruits] = useState<ProductItem[]>([]);
@@ -77,6 +80,8 @@ export default function HomeScreen() {
           contentContainerStyle={[styles.horizontalList, { paddingBottom: 30 }]}
           renderItem={({ item }) => <ProductCard item={item} />}
         />
+
+        <LogoutButton/>
       </ScrollView>
     </SafeAreaView>
   );
