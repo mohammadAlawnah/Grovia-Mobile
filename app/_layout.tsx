@@ -18,6 +18,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -25,15 +26,17 @@ export default function RootLayout() {
     NavigationBar.setBehaviorAsync("overlay-swipe");
   }, []);
   return (
-    <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="WelcomeScreen" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(main)" />
-        </Stack>
-      </CartProvider>
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <CartProvider>
+          <FavoritesProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="WelcomeScreen" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(main)" />
+            </Stack>
+          </FavoritesProvider>
+        </CartProvider>
+      </QueryClientProvider>
   );
 }
