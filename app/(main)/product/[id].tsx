@@ -1,7 +1,7 @@
 import { getProductById } from "@/api/Product.Servise";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import ProductImageCard from "@/components/productDetailsComp/ProductImageCard";
 import ProductHeader from "@/components/productDetailsComp/ProductHeader";
 import PriceSection from "@/components/productDetailsComp/PriceSection";
@@ -93,7 +93,7 @@ const ProductDetails = () => {
         
         <AddToCartButton onPress={() => addToCart(count)} />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
