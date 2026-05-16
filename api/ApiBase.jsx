@@ -5,7 +5,7 @@ export const API_URL = "https://grovia-api.vercel.app/api";
 
 const handelErrors = async (err) => {
   if (err?.response?.status === 401) {
-      console.log("Unauthorized - need login");
+    console.log("Unauthorized - need login");
   }
 
   if (err?.response?.status === 403) {
@@ -22,16 +22,16 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (config) => {
-      const token = await SecureStore.getItemAsync("token");
-      const tokenType = "Bearer";
+    const token = await SecureStore.getItemAsync("token");
+    const tokenType = "Berrer";
 
-      if (token) {
-          config.headers = config.headers || {};
-          config.headers.Authorization = `${tokenType} ${token}`;
-      }
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `${tokenType} ${token}`;
+    }
 
-      config.headers["Content-Type"] = "application/json";
-      return config;
+    config.headers["Content-Type"] = "application/json";
+    return config;
   },
   (err) => Promise.reject(err),
 );

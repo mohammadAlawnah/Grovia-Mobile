@@ -3,89 +3,96 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 export default function Banner() {
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.banner}>
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=1200&auto=format&fit=crop",
-          }}
-          style={styles.bannerLeftImage}
+          source={require("@/assets/images/Ad-logo.png")}
+          style={styles.leftImage}
           resizeMode="contain"
         />
 
-        <View style={styles.bannerTextContainer}>
-          <Text style={styles.bannerTitle}>Fresh Vegetables</Text>
-          <Text style={styles.bannerSubtitle}>Get Up To 40% OFF</Text>
+        <View style={styles.textView}>
+          <Text style={styles.title}>Fresh Vegetables</Text>
+          <Text style={styles.subtitle}>Get Up To 40% OFF</Text>
         </View>
 
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
-          }}
-          style={styles.bannerRightImage}
+          source={require("@/assets/images/Ad-logo2.png")}
+          style={styles.rightTopImage}
           resizeMode="contain"
         />
       </View>
 
       <View style={styles.dotsContainer}>
-        <View style={styles.dot} />
         <View style={[styles.dot, styles.activeDot]} />
         <View style={styles.dot} />
+        <View style={styles.dot} />
       </View>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 24,
+  },
   banner: {
-    height: 115,
-    backgroundColor: "#F3F8E8",
+    height: 120,
+    backgroundColor: "#FAF8EC",
     borderRadius: 18,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     overflow: "hidden",
-    paddingHorizontal: 10,
+    position: "relative",
+    justifyContent: "center",
   },
-  bannerLeftImage: {
-    width: 90,
-    height: 90,
+  leftImage: {
+    position: "absolute",
+    left: -18,
+    bottom: 0,
+    width: 145,
+    height: 120,
   },
-  bannerRightImage: {
-    width: 70,
-    height: 70,
-  },
-  bannerTextContainer: {
-    flex: 1,
+  textView: {
+    marginLeft: 120,
     alignItems: "center",
+    justifyContent: "center",
   },
-  bannerTitle: {
-    fontSize: 22,
+  title: {
+    fontSize: 25,
+    fontWeight: "800",
+    color: "#000",
+  },
+  subtitle: {
+    fontSize: 18,
     fontWeight: "700",
-    color: "#181725",
-  },
-  bannerSubtitle: {
-    marginTop: 4,
-    fontSize: 14,
     color: "#53B175",
-    fontWeight: "500",
+    marginTop: 7,
+  },
+  rightTopImage: {
+    position: "absolute",
+    right: -35,
+    top: -10,
+    width: 170,
+    height: 100,
+    zIndex: -1,
   },
   dotsContainer: {
+    position: "absolute",
+    bottom: 12,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 12,
-    marginBottom: 24,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#D9D9D9",
-    marginHorizontal: 3,
+    backgroundColor: "#AFAFAF",
+    marginHorizontal: 5,
   },
   activeDot: {
-    width: 18,
+    width: 28,
     backgroundColor: "#53B175",
   },
 });

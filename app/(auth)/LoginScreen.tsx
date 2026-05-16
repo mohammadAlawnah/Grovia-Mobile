@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -6,7 +7,6 @@ import {
   Text,
   useWindowDimensions,
   View,
-  ActivityIndicator,
 } from "react-native";
 
 import { login } from "@/api/UserService";
@@ -16,7 +16,7 @@ import Logo from "@/components/loginComponents/Logo";
 import Password from "@/components/loginComponents/Password";
 import { Link, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -31,6 +31,12 @@ export default function LoginScreen() {
   const normalize = (size: number) => {
     return (size / 375) * width;
   };
+
+  useEffect(() => {
+    if (SecureStore.getItem("token") != null) {
+      router.replace("/HomeScreen");
+    }
+  }, []);
 
   const {
     control,
@@ -49,12 +55,10 @@ export default function LoginScreen() {
       setIsLoading(true);
       const result = await login(data);
 
-
       const token = result.data.accessToken;
       await SecureStore.setItemAsync("token", token);
 
       router.replace("/HomeScreen");
-
     } catch (error: any) {
       setError("Invalid Email or password");
     } finally {
@@ -64,76 +68,72 @@ export default function LoginScreen() {
 
   if (isLoading)
     return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#53B175" />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#53B175" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
     );
 
   return (
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView
-            style={styles.keyboard}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.keyboard}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContainer,
+            {
+              paddingHorizontal: width * 0.05,
+              minHeight: height,
+              paddingTop: height * 0.02,
+            },
+          ]}
+          keyboardShouldPersistTaps="handled"
         >
-          <ScrollView
-              contentContainerStyle={[
-                styles.scrollContainer,
-                {
-                  paddingHorizontal: width * 0.05,
-                  minHeight: height,
-                  paddingTop: height * 0.02,
-                },
-              ]}
-              keyboardShouldPersistTaps="handled"
-          >
-            <Logo />
+          <Logo />
 
-            <Text style={[styles.title, { fontSize: normalize(20) }]}>
-              Login page
+          <Text style={[styles.title, { fontSize: normalize(20) }]}>
+            Login page
+          </Text>
+
+          <View style={{ width: width * 0.8 }}>
+            <Email control={control} errors={errors} name="email" />
+
+            <Password
+              control={control}
+              errors={errors}
+              name="password"
+              placeholder="Password"
+            />
+
+            {error && <Text style={styles.errorText}>{error}</Text>}
+          </View>
+
+          <View style={{ width: width * 0.8 }}>
+            <Button title="Login" onPress={handleSubmit(onSubmit)} />
+          </View>
+
+          <View style={styles.forgotContainer}>
+            <Link href={"/ForgotPasswordScreen"}>
+              <Text style={{ fontSize: normalize(16) }}>Forgot Password?</Text>
+            </Link>
+          </View>
+
+          <View style={styles.signupContainer}>
+            <Text style={{ fontSize: normalize(14) }}>
+              Dont have an account?
             </Text>
 
-            <View style={{ width: width * 0.8 }}>
-              <Email control={control} errors={errors} name="email" />
-
-              <Password
-                  control={control}
-                  errors={errors}
-                  name="password"
-                  placeholder="Password"
-              />
-
-              {error && <Text style={styles.errorText}>{error}</Text>}
-            </View>
-
-            <View style={{ width: width * 0.8 }}>
-              <Button title="Login" onPress={handleSubmit(onSubmit)} />
-            </View>
-
-            <View style={styles.forgotContainer}>
-              <Link href={"/ForgotPasswordScreen"}>
-                <Text style={{ fontSize: normalize(16) }}>
-                  Forgot Password?
-                </Text>
-              </Link>
-            </View>
-
-            <View style={styles.signupContainer}>
-              <Text style={{ fontSize: normalize(14) }}>
-                Dont have an account?
+            <Link href={"/RegisterScreen"}>
+              <Text style={[styles.signupText, { fontSize: normalize(14) }]}>
+                Sign up
               </Text>
-
-              <Link href={"/RegisterScreen"}>
-                <Text
-                    style={[styles.signupText, { fontSize: normalize(14) }]}
-                >
-                  Sign up
-                </Text>
-              </Link>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+            </Link>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
