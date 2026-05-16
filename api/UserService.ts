@@ -16,9 +16,13 @@ export const login = async (data: any) => {
   return await ApiBase.post("/users/auth/login", data);
 };
 
+export const regester = async (data: any) => {
+  return await ApiBase.post("/users/auth/register", data);
+};
+
 type payload = {
   //username: string;
-  email: string;  
+  email: string;
   password: string;
-   //location: string;
+  //location: string;
 };

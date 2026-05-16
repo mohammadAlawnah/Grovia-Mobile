@@ -1,17 +1,16 @@
 import { getProductById } from "@/api/Product.Servise";
-import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import ProductImageCard from "@/components/productDetailsComp/ProductImageCard";
-import ProductHeader from "@/components/productDetailsComp/ProductHeader";
+import AddToCartButton from "@/components/productDetailsComp/AddToCartButton";
+import NutritionInfo from "@/components/productDetailsComp/NutritionInfo";
 import PriceSection from "@/components/productDetailsComp/PriceSection";
 import ProductDescription from "@/components/productDetailsComp/ProductDescription";
-import NutritionInfo from "@/components/productDetailsComp/NutritionInfo";
+import ProductHeader from "@/components/productDetailsComp/ProductHeader";
+import ProductImageCard from "@/components/productDetailsComp/ProductImageCard";
 import ReviewStars from "@/components/productDetailsComp/ReviewStars";
-import AddToCartButton from "@/components/productDetailsComp/AddToCartButton";
-import { Dimensions } from "react-native";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const { width } = Dimensions.get("window");
 const ProductDetails = () => {
@@ -48,23 +47,19 @@ const ProductDetails = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-
+    <ScrollView style={styles.container}>
       <ProductImageCard productDetails={productDetails} />
 
       <View style={styles.content}>
-
         <ProductHeader
           productDetails={productDetails}
           isFavorite={favorite}
           setIsFavorite={toggleFavorite}
         />
 
-
         <Text style={styles.weight}>
           {`${productDetails.quantity},${productDetails.unit}`}
         </Text>
-
 
         <PriceSection
           productDetails={productDetails}
@@ -75,22 +70,19 @@ const ProductDetails = () => {
 
         <View style={styles.divider} />
 
-
         <ProductDescription productDetails={productDetails} />
 
         <View style={styles.divider} />
-
 
         <NutritionInfo productDetails={productDetails} />
 
         <View style={styles.divider} />
 
-
         <View style={styles.listRow}>
           <Text style={styles.rowTitle}>Review</Text>
           <ReviewStars productDetails={productDetails} />
         </View>
-        
+
         <AddToCartButton onPress={() => addToCart(count)} />
       </View>
     </ScrollView>
