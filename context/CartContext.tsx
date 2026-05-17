@@ -1,17 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-type CartContextValue = {
-  cartCount: number;
-  addToCart: (quantity?: number) => void;
-};
+const CartContext = createContext<any>(null);
 
-const CartContext = createContext<CartContextValue | undefined>(undefined);
-
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({ children }: any) {
   const [cartCount, setCartCount] = useState(0);
 
-  const addToCart = (quantity = 1) => {
-    setCartCount((currentCount) => currentCount + quantity);
+  const addToCart = () => {
+    setCartCount(cartCount + 1);
   };
 
   return (
@@ -22,11 +17,5 @@ export function CartProvider({ children }: { children: ReactNode }) {
 }
 
 export function useCart() {
-  const context = useContext(CartContext);
-
-  if (!context) {
-    throw new Error("useCart must be used inside CartProvider");
-  }
-
-  return context;
+  return useContext(CartContext);
 }
