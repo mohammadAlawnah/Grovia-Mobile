@@ -67,7 +67,6 @@ export default function EnterCodeScreen() {
     }
   };
 
-  // Loading Screen
   if (loading) {
     return (
         <View style={styles.loadingContainer}>
@@ -87,7 +86,7 @@ export default function EnterCodeScreen() {
               styles.container,
               {
                 paddingHorizontal: width * 0.05,
-                paddingTop: height * 0.08, // نزول الشاشة
+                paddingTop: height * 0.08,
               },
             ]}
         >

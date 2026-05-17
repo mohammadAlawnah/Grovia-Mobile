@@ -51,15 +51,16 @@ export default function Password({
                 },
               ]}
             >
-              <TextInput
-                style={[styles.passwordInput, { fontSize: normalize(14) }]}
-                onBlur={field.onBlur}
-                onChangeText={field.onChange}
-                value={field.value || ""}
-                placeholder={placeholder || "Password"}
-                placeholderTextColor="gray"
-                secureTextEntry={!showPassword}
-              />
+                <TextInput
+                    testID="password-input"
+                    style={[styles.passwordInput, { fontSize: normalize(14) }]}
+                    onBlur={field.onBlur}
+                    onChangeText={field.onChange}
+                    value={field.value || ""}
+                    placeholder={placeholder || "Password"}
+                    placeholderTextColor="gray"
+                    secureTextEntry={!showPassword}
+                />
 
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
