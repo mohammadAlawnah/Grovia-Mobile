@@ -42,7 +42,6 @@ export default function ResetPasswordScreen() {
 
       await sendResetCode(data);
 
-      // اذا نجح
       setLoading(true);
 
       router.push({
@@ -58,7 +57,6 @@ export default function ResetPasswordScreen() {
     }
   };
 
-  // Loading Screen
   if (loading) {
     return (
         <View style={styles.loadingContainer}>
@@ -79,7 +77,7 @@ export default function ResetPasswordScreen() {
               {
                 paddingHorizontal: width * 0.05,
                 minHeight: height,
-                paddingTop: height * 0.08, // نزّل الصفحة شوي
+                paddingTop: height * 0.08, 
               },
             ]}
             keyboardShouldPersistTaps="handled"
