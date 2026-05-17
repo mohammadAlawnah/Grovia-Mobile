@@ -1,7 +1,7 @@
 import {
-    decreaseCartItem,
-    increaseCartItem,
-    removeItem,
+  decreaseCartItem,
+  increaseCartItem,
+  removeItem,
 } from "@/api/Cart.Servise";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -22,58 +22,68 @@ export type CartItemType = {
 
 type CartItemProps = {
   item: CartItemType;
-  setCartItems: React.Dispatch<React.SetStateAction<CartItemType[]>>;
+  setCartItems: any;
 };
 
 export default function CartItem({ item, setCartItems }: CartItemProps) {
-  const deleteItem = async (productId: number) => {
-    await removeItem(productId);
+  const deleteItem = async () => {
+    await removeItem(item.product.id);
 
-    setCartItems((prev) =>
-      prev.filter((cartItem) => cartItem.product.id !== productId),
-    );
+    setCartItems((oldItems: CartItemType[]) => {
+      return oldItems.filter((cartItem) => {
+        return cartItem.product.id !== item.product.id;
+      });
+    });
   };
 
-  const increaseItem = async (productId: number) => {
-    await increaseCartItem(productId);
+  const increaseItem = async () => {
+    await increaseCartItem(item.product.id);
 
-    setCartItems((prev) =>
-      prev.map((cartItem) =>
-        cartItem.product.id === productId
-          ? {
-              ...cartItem,
-              quantity: cartItem.quantity + 1,
-              price: (
-                Number(cartItem.price) +
-                Number(cartItem.price) / cartItem.quantity
-              ).toString(),
-            }
-          : cartItem,
-      ),
-    );
-  };
-
-  const decreaseItem = async (productId: number) => {
-    await decreaseCartItem(productId);
-
-    setCartItems((prev) =>
-      prev
-        .map((cartItem) => {
-          if (cartItem.product.id !== productId) return cartItem;
-
-          if (cartItem.quantity === 1) return null;
+    setCartItems((oldItems: CartItemType[]) => {
+      return oldItems.map((cartItem) => {
+        if (cartItem.product.id === item.product.id) {
+          const itemPrice = Number(cartItem.price) / cartItem.quantity;
+          const newQuantity = cartItem.quantity + 1;
+          const newPrice = itemPrice * newQuantity;
 
           return {
             ...cartItem,
-            quantity: cartItem.quantity - 1,
-            price: (
-              Number(cartItem.price) -
-              Number(cartItem.price) / cartItem.quantity
-            ).toString(),
+            quantity: newQuantity,
+            price: newPrice.toString(),
           };
+        }
+
+        return cartItem;
+      });
+    });
+  };
+
+  const decreaseItem = async () => {
+    await decreaseCartItem(item.product.id);
+
+    setCartItems((oldItems: CartItemType[]) => {
+      return oldItems
+        .map((cartItem) => {
+          if (cartItem.product.id === item.product.id) {
+            if (cartItem.quantity === 1) {
+              return null;
+            }
+
+            const itemPrice = Number(cartItem.price) / cartItem.quantity;
+            const newQuantity = cartItem.quantity - 1;
+            const newPrice = itemPrice * newQuantity;
+
+            return {
+              ...cartItem,
+              quantity: newQuantity,
+              price: newPrice.toString(),
+            };
+          }
+
+          return cartItem;
         })
-        .filter((cartItem): cartItem is CartItemType => cartItem !== null),
-    );
+        .filter((cartItem) => cartItem !== null);
+    });
   };
 
   return (
@@ -88,7 +98,7 @@ export default function CartItem({ item, setCartItems }: CartItemProps) {
         <View style={styles.titleRow}>
           <Text style={styles.title}>{item.product.title}</Text>
 
-          <TouchableOpacity onPress={() => deleteItem(item.product.id)}>
+          <TouchableOpacity onPress={deleteItem}>
             <Ionicons name="close" size={22} color="#B3B3B3" />
           </TouchableOpacity>
         </View>
@@ -100,19 +110,13 @@ export default function CartItem({ item, setCartItems }: CartItemProps) {
 
         <View style={styles.bottomRow}>
           <View style={styles.countRow}>
-            <TouchableOpacity
-              style={styles.countButton}
-              onPress={() => decreaseItem(item.product.id)}
-            >
+            <TouchableOpacity style={styles.countButton} onPress={decreaseItem}>
               <Ionicons name="remove" size={18} color="#B3B3B3" />
             </TouchableOpacity>
 
             <Text style={styles.countText}>{item.quantity}</Text>
 
-            <TouchableOpacity
-              style={styles.countButton}
-              onPress={() => increaseItem(item.product.id)}
-            >
+            <TouchableOpacity style={styles.countButton} onPress={increaseItem}>
               <Ionicons name="add" size={18} color="#53B175" />
             </TouchableOpacity>
           </View>

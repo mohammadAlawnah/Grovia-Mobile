@@ -33,11 +33,16 @@ export default function LoginScreen() {
   };
 
   useEffect(() => {
-    if (SecureStore.getItem("token") != null) {
-      router.replace("/HomeScreen");
-    }
+    checkToken();
   }, []);
 
+  const checkToken = async () => {
+    const token = await SecureStore.getItemAsync("token");
+
+    if (token != null) {
+      router.replace("/HomeScreen");
+    }
+  };
   const {
     control,
     handleSubmit,
